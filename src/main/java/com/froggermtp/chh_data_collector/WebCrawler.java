@@ -7,14 +7,14 @@ import java.net.URL;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is a simple web crawler built using {@link Jsoup}.
@@ -30,7 +30,7 @@ import org.jsoup.nodes.Element;
  * visited again.
  */
 public class WebCrawler {
-	private static final Logger logger = Logger.getLogger(WebCrawler.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(WebCrawler.class);
 	
 	/**
 	 * Sets timeout for {@code Jsoup#connect(String)}.
@@ -97,7 +97,7 @@ public class WebCrawler {
 		
 		this.totalLinksVisited = 0;
 		
-		logger.log(Level.INFO, "seed urls are {0}", seedUrls.toString());
+		logger.info("Seed urls are {}", seedUrls.toString());
 		
 		for(String url : seedUrls) {
 			linksToCrawl.add(url);
@@ -115,7 +115,7 @@ public class WebCrawler {
 	 * visited again.
 	 */
 	public void crawl() {
-		logger.log(Level.INFO, "starting the web crawler...");
+		logger.info("Starting the web crawler...");
 		
 		while(!linksToCrawl.isEmpty()) {
 			String urlToCrawl = linksToCrawl.poll();
@@ -141,19 +141,19 @@ public class WebCrawler {
 								if(!linksToCrawl.contains(absoluteHref)) {
 									linksToCrawl.add(absoluteHref);
 									
-									logger.log(Level.INFO, "added {0} to the queue", absoluteHref);
+									logger.debug("Added {} to the queue", absoluteHref);
 								}
 							}
 						}
 					}
 				}
 				catch(IOException e) {
-					logger.log(Level.SEVERE, e.toString(), e);
+					logger.debug(e.toString());
 				}
 			}
 		}
 
-		logger.log(Level.INFO, "the web crawler has finished");
+		logger.info("The web crawler has finished");
 	}
 	
 	/**
@@ -227,7 +227,7 @@ public class WebCrawler {
 	 * @param doc  the {@code Document} currently being processed by the web crawler
 	 */
 	private void onVisit(Document doc) {
-		logger.log(Level.INFO, "currently visiting {0}", doc.location());
+		logger.debug("Currently visiting {}", doc.location());
 	}
 	
 	/**

@@ -1,13 +1,13 @@
 package com.froggermtp.chh_data_collector;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Main entry point
  */
 public class App {
-	private static final Logger logger = Logger.getLogger(App.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(App.class);
 	
 	public static void main( String[] args ) {	
 		String[] seedUrls = {"http://www.rapzilla.com/rz/music/freemp3s/download-list"};
@@ -15,6 +15,6 @@ public class App {
         WebCrawler webcrawler = new WebCrawler(seedUrls);
         webcrawler.crawl();
         
-        logger.log(Level.INFO, "total links visited : {0}", webcrawler.getTotalLinksVisited());
+        logger.info("Total links visited : {}", webcrawler.getTotalLinksVisited());
     }
 }
