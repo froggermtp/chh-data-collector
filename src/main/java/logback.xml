@@ -1,0 +1,36 @@
+<configuration>
+   <timestamp key="byDay" datePattern="yyyyMMdd'T'HHmmss"/>
+
+   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+      <encoder>
+         <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+      </encoder>
+   </appender>
+   
+   <appender name="TIME_BASED_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>c:/logs/timeBasedlogFile.log</file>
+   		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">    	
+     		<!-- daily rollover -->
+     		<fileNamePattern>c:/logs/timeBasedlogFile.%d{yyyy-MM-dd}.log</fileNamePattern>
+     		<maxHistory>30</maxHistory>
+   		</rollingPolicy>
+
+   		<encoder>
+     		<pattern>%relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+   		</encoder>
+ 	</appender>
+
+   <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+      <file> log-${byDay}.txt </file>
+      <append>true</append>
+      <encoder>
+         <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+      </encoder>
+   </appender>
+
+   <root level="debug">
+      <appender-ref ref="TIME_BASED_FILE" />
+      <appender-ref ref="STDOUT" />
+   </root>
+
+</configuration>

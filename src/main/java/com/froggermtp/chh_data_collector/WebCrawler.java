@@ -6,6 +6,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -97,7 +98,7 @@ public class WebCrawler {
 		
 		this.totalLinksVisited = 0;
 		
-		logger.info("Seed urls are {}", seedUrls.toString());
+		logger.info("Seed urls are {}", Arrays.toString(seedUrls));
 		
 		for(String url : seedUrls) {
 			linksToCrawl.add(url);
@@ -148,7 +149,7 @@ public class WebCrawler {
 					}
 				}
 				catch(IOException e) {
-					logger.debug(e.toString());
+					logger.error("JSoup failed to connect to the url {}", urlToCrawl, e);
 				}
 			}
 		}
@@ -170,6 +171,8 @@ public class WebCrawler {
 	 * @return true if the URL should be processed, otherwise returns false
 	 */
 	private boolean shouldVisit(String url) {
+		logger.debug("Entering shouldVisit(url={})", url);
+		
 		Matcher match = IGNORE_SUFFIX_PATTERN.matcher(url);
 		boolean validUrl = isValidUrl(url);
 		boolean followUrl = false;
@@ -185,7 +188,10 @@ public class WebCrawler {
 			followUrl = true;
 		}
 		
-		return (!match.matches() && validUrl && followUrl);
+		boolean shouldVisit = !match.matches() && validUrl && followUrl;
+		
+		logger.debug("Leaving shouldVisit(): {}", shouldVisit);
+		return shouldVisit;
 	}
 	
 	/**
@@ -200,22 +206,25 @@ public class WebCrawler {
 	 * @return true if the URL is valid, otherwise returns false
 	 */
 	private boolean isValidUrl(String url) {
+		logger.debug("Entering isValidUrl(url={})", url);
+		
 		URL urlTest = null;
 		
 		try {
 			urlTest = new URL(url);
 		} catch (MalformedURLException e) {
+			logger.debug("Leaving isValidUrl(): false");
 			return false;
 		}
 		
 		try {
 			urlTest.toURI();
-		} catch (URISyntaxException e) {
-			return false;
-		} catch(NullPointerException e) {
+		} catch (URISyntaxException | NullPointerException e) {
+			logger.debug("Leaving isValidUrl(): false");
 			return false;
 		}
 		
+		logger.debug("Leaving isValidUrl(): true");
 		return true;
 	}
 	
@@ -235,6 +244,7 @@ public class WebCrawler {
 	 * {@code WebCrawler#linksToCrawl}.
 	 */
 	public void stop() {
+		logger.info("The web crawler is stopping...");
 		shouldCrawl = false;
 	}
 	
