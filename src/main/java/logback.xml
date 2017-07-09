@@ -19,7 +19,7 @@
      		<pattern>%relative [%thread] %-5level %logger{35} - %msg%n</pattern>
    		</encoder>
  	</appender>
-
+<!--
    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
       <file> log-${byDay}.txt </file>
       <append>true</append>
@@ -27,7 +27,7 @@
          <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
       </encoder>
    </appender>
-
+-->
    <root level="debug">
       <appender-ref ref="TIME_BASED_FILE" />
       <appender-ref ref="STDOUT" />
