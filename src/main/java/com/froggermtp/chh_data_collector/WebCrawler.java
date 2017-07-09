@@ -122,16 +122,11 @@ public class WebCrawler {
 		logger.info("Starting the web crawler...");
 		
 		while(!linksToCrawl.isEmpty()) {
-			try {
-				Thread.sleep(TIME_DELAY);
-			} catch (InterruptedException e) {
-				logger.error("Thread was interrupted", e);
-			}
-			
 			String urlToCrawl = linksToCrawl.poll();
 			
 			if(visitedUrls.add(urlToCrawl)) {
 				try {
+					worldPause();
 					Document doc = Jsoup.connect(urlToCrawl).timeout(TIMEOUT).get();
 					ArrayList<Element> links = doc.select("a[href]");
 					
@@ -167,6 +162,20 @@ public class WebCrawler {
 	}
 	
 	/**
+	 * Delays the application for {@code TIME_DELAY} milliseconds.
+	 * The delay is courtesy so that the website is not overloaded with requests from the crawler.
+	 */
+	private void worldPause() {
+		logger.debug("I stop the world, world stop! {} millisecond delay", TIME_DELAY);
+		
+		try {
+			Thread.sleep(TIME_DELAY);
+		} catch (InterruptedException e) {
+			logger.error("Thread was interrupted", e);
+		}
+	}
+	
+	/**
 	 * Determines if the web crawler should process a URL.
 	 * <p>
 	 * A link is only processed if it meets these three conditions:<ul>
@@ -183,7 +192,6 @@ public class WebCrawler {
 		logger.debug("Entering shouldVisit(url={})", url);
 		
 		Matcher match = IGNORE_SUFFIX_PATTERN.matcher(url);
-		boolean validUrl = isValidUrl(url);
 		boolean followUrl = false;
 		
 		if(!FOLLOW_EXTERNAL_LINKS) {
@@ -196,11 +204,23 @@ public class WebCrawler {
 		else {
 			followUrl = true;
 		}
+				
+		// These conditions are checked in this order for efficiency
+		if(!followUrl) {	
+			logger.debug("Leaving shouldVisit(): false");
+			return false;
+		}
+		else if(match.matches()) {
+			logger.debug("Leaving shouldVisit(): false");
+			return false;
+		}
+		else if(!isValidUrl(url)) {		
+			logger.debug("Leaving shouldVisit(): false");
+			return false;
+		}
 		
-		boolean shouldVisit = !match.matches() && validUrl && followUrl;
-		
-		logger.debug("Leaving shouldVisit(): {}", shouldVisit);
-		return shouldVisit;
+		logger.debug("Leaving shouldVisit(): true");
+		return true;
 	}
 	
 	/**
