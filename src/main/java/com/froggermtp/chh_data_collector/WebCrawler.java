@@ -38,14 +38,20 @@ public class WebCrawler {
 	 * <p>
 	 * Might want to look at {@link Connection#timeout()}.
 	 */
-	private int timeout;
+	private final int TIMEOUT = 3000;
 	
 	/**
-	 * If true the crawler will only visit a link if the URL begins exactly with one of the seed 
+	 * If false the crawler will only visit a link if the URL begins exactly with one of the seed 
 	 * URLs. 
 	 * Otherwise the crawler will visit any URL.
 	 */
-	private boolean followExternalLinks;
+	private final boolean FOLLOW_EXTERNAL_LINKS = false;;
+	
+	/**
+	 * Sets a short time delay between each scrape.
+	 * This is a courtesy for the website being scraped.
+	 */
+	final private int TIME_DELAY = 1000;
 	
 	/**
 	 * If true the web crawler will run as long as there are URLs to process. 
@@ -88,9 +94,6 @@ public class WebCrawler {
 	private long totalLinksVisited;
 	
 	public WebCrawler(String[] seedUrls) {
-		this.timeout = 3000;
-		this.followExternalLinks = false;
-		
 		this.shouldCrawl = true;
 		this.seedUrls = seedUrls;
 		this.linksToCrawl = new ArrayDeque<>();
@@ -119,11 +122,17 @@ public class WebCrawler {
 		logger.info("Starting the web crawler...");
 		
 		while(!linksToCrawl.isEmpty()) {
+			try {
+				Thread.sleep(TIME_DELAY);
+			} catch (InterruptedException e) {
+				logger.error("Thread was interrupted", e);
+			}
+			
 			String urlToCrawl = linksToCrawl.poll();
 			
 			if(visitedUrls.add(urlToCrawl)) {
 				try {
-					Document doc = Jsoup.connect(urlToCrawl).timeout(timeout).get();
+					Document doc = Jsoup.connect(urlToCrawl).timeout(TIMEOUT).get();
 					ArrayList<Element> links = doc.select("a[href]");
 					
 					totalLinksVisited++;
@@ -177,7 +186,7 @@ public class WebCrawler {
 		boolean validUrl = isValidUrl(url);
 		boolean followUrl = false;
 		
-		if(!followExternalLinks) {
+		if(!FOLLOW_EXTERNAL_LINKS) {
 			for(String seed : seedUrls) {
 				if(url.startsWith(seed)) {
 					followUrl = true;
@@ -235,7 +244,7 @@ public class WebCrawler {
 	 * 
 	 * @param doc  the {@code Document} currently being processed by the web crawler
 	 */
-	private void onVisit(Document doc) {
+	public void onVisit(Document doc) {
 		logger.debug("Currently visiting {}", doc.location());
 	}
 	
