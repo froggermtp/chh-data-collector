@@ -10,7 +10,7 @@ public class App {
 	private static final Logger logger = LoggerFactory.getLogger(App.class);
 	
 	public static void main( String[] args ) {	
-		String[] seedUrls = {"http://www.rapzilla.com/rz/music/freemp3s/download-list"};
+		String[] seedUrls = {"http://www.rapzilla.com/rz/music/freemp3s/"};
     	
         WebCrawler webcrawler = new WebCrawler(seedUrls);
         webcrawler.crawl();
