@@ -265,7 +265,7 @@ public class WebCrawler {
 	 * @param doc  the {@code Document} currently being processed by the web crawler
 	 */
 	public void onVisit(Document doc) {
-		logger.debug("Currently visiting {}", doc.location());
+		logger.info("Currently visiting {}", doc.location());
 	}
 	
 	/**
