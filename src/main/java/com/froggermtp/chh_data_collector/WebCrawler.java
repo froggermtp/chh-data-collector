@@ -85,7 +85,7 @@ public class WebCrawler {
 	 * <p>
 	 * See {@link WebCrawler#shouldVisit(String)}
 	 */
-	private final static Pattern IGNORE_SUFFIX_PATTERN = Pattern.compile(
+	private static final Pattern IGNORE_SUFFIX_PATTERN = Pattern.compile(
 			".*(\\.(css|js|gif|jpg|png|mp3|mp3|zip|gz))$");
 	
 	/**
