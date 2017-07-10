@@ -29,8 +29,11 @@
    </appender>
 -->
    <root level="debug">
-      <appender-ref ref="TIME_BASED_FILE" />
-      <appender-ref ref="STDOUT" />
+   		<appender-ref ref="TIME_BASED_FILE" />
+   </root>
+   	  
+   <root level="info">
+   		<appender-ref ref="STDOUT" />
    </root>
 
 </configuration>
