@@ -138,19 +138,16 @@ public class WebCrawler {
 						break;
 					}
 					
-					for(Element link : links) {
-						String absoluteHref = link.attr("abs:href");
-						
-						if(shouldVisit(absoluteHref)) {
-							if(!visitedUrls.contains(absoluteHref)) {
-								if(!linksToCrawl.contains(absoluteHref)) {
-									linksToCrawl.add(absoluteHref);
-									
-									logger.debug("Added {} to the queue", absoluteHref);
-								}
-							}
-						}
-					}
+					links
+						.stream()
+						.map((a) -> a.attr("abs:href"))
+						.filter((s) -> shouldVisit(s))
+						.filter((s) -> !visitedUrls.contains(s))
+						.filter((s) -> !linksToCrawl.contains(s))
+						.forEach((s) -> {
+							linksToCrawl.add(s);
+							logger.debug("Added {} to the queue", s);
+						});
 				}
 				catch(IOException e) {
 					logger.error("JSoup failed to connect to the url {}", urlToCrawl, e);
