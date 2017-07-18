@@ -141,7 +141,7 @@ public class WebCrawler {
 					links
 						.stream()
 						.map((a) -> a.attr("abs:href"))
-						.filter((s) -> shouldVisit(s))
+						.filter(this::shouldVisit)
 						.filter((s) -> !visitedUrls.contains(s))
 						.filter((s) -> !linksToCrawl.contains(s))
 						.forEach((s) -> {
