@@ -12,7 +12,7 @@ public class App {
 	public static void main( String[] args ) {	
 		String[] seedUrls = {"http://www.rapzilla.com/rz/music/freemp3s/"};
     	
-        WebCrawler webcrawler = new WebCrawler(seedUrls);
+        WebCrawler webcrawler = new RapzillaCrawler(seedUrls);
         webcrawler.crawl();
         
         logger.info("Total links visited : {}", webcrawler.getTotalLinksVisited());
