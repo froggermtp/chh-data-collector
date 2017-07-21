@@ -34,24 +34,11 @@ public class WebCrawler {
 	private static final Logger logger = LoggerFactory.getLogger(WebCrawler.class);
 	
 	/**
-	 * Sets timeout for {@code Jsoup#connect(String)}.
-	 * <p>
-	 * Might want to look at {@link Connection#timeout()}.
-	 */
-	private final int TIMEOUT = 3000;
-	
-	/**
 	 * If false the crawler will only visit a link if the URL begins exactly with one of the seed 
 	 * URLs. 
 	 * Otherwise the crawler will visit any URL.
 	 */
 	private final boolean FOLLOW_EXTERNAL_LINKS = false;;
-	
-	/**
-	 * Sets a short time delay between each scrape.
-	 * This is a courtesy for the website being scraped.
-	 */
-	final private int TIME_DELAY = 1000;
 	
 	/**
 	 * If true the web crawler will run as long as there are URLs to process. 
@@ -126,8 +113,7 @@ public class WebCrawler {
 			
 			if(visitedUrls.add(urlToCrawl)) {
 				try {
-					worldPause();
-					Document doc = Jsoup.connect(urlToCrawl).timeout(TIMEOUT).get();
+					Document doc = getDocument(urlToCrawl);
 					ArrayList<Element> links = doc.select("a[href]");
 					
 					totalLinksVisited++;
@@ -162,14 +148,24 @@ public class WebCrawler {
 	 * Delays the application for {@code TIME_DELAY} milliseconds.
 	 * The delay is courtesy so that the website is not overloaded with requests from the crawler.
 	 */
-	private void worldPause() {
-		logger.debug("I stop the world, world stop! {} millisecond delay", TIME_DELAY);
+	private void sleep() {
+		final int TIME_DELAY = 1000;
+		
+		logger.debug("Sleeping for {} milliseconds", TIME_DELAY);
 		
 		try {
 			Thread.sleep(TIME_DELAY);
 		} catch (InterruptedException e) {
 			logger.error("Thread was interrupted", e);
 		}
+	}
+	
+	private Document getDocument(String urlToCrawl) throws IOException {
+		final int TIMEOUT = 3000;
+		
+		sleep();
+		
+		return Jsoup.connect(urlToCrawl).timeout(TIMEOUT).get();
 	}
 	
 	/**
