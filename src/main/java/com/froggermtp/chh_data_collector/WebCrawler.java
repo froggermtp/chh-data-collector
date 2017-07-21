@@ -8,8 +8,6 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.jsoup.Jsoup;
@@ -65,15 +63,6 @@ public class WebCrawler {
 	 * Any URL in this list will not be visited again. 
 	 */
 	private HashSet<String> visitedUrls;
-	/**
-	 * Any link that is scraped from a URL will not added to {@code WebCrawler#linksToCrawl} if it
-	 * ends with any of the suffixes defined in the pattern.
-	 * This means that URL cannot be a valid URL to visit.
-	 * <p>
-	 * See {@link WebCrawler#shouldVisit(String)}
-	 */
-	private static final Pattern IGNORE_SUFFIX_PATTERN = Pattern.compile(
-			".*(\\.(css|js|gif|jpg|png|mp3|mp3|zip|gz))$");
 	
 	/**
 	 * Keeps track of the total amount of links that are visited by the web crawler.
@@ -128,9 +117,9 @@ public class WebCrawler {
 					links
 						.stream()
 						.filter(this::shouldVisit)
-						.filter((s) -> !visitedUrls.contains(s))
-						.filter((s) -> !linksToCrawl.contains(s))
-						.forEach((s) -> {
+						.filter(s -> !visitedUrls.contains(s))
+						.filter(s -> !linksToCrawl.contains(s))
+						.forEach(s -> {
 							linksToCrawl.add(s);
 							logger.debug("Added {} to the queue", s);
 						});
@@ -191,7 +180,8 @@ public class WebCrawler {
 	private boolean shouldVisit(String url) {
 		logger.debug("Entering shouldVisit(url={})", url);
 		
-		Matcher match = IGNORE_SUFFIX_PATTERN.matcher(url);
+		final String IGNORE_SUFFIX_PATTERN = ".*(\\.(css|js|gif|jpg|png|mp3|mp3|zip|gz))$";
+		
 		boolean followUrl = false;
 		
 		if(!FOLLOW_EXTERNAL_LINKS) {
@@ -210,7 +200,7 @@ public class WebCrawler {
 			logger.debug("Leaving shouldVisit(): false");
 			return false;
 		}
-		else if(match.matches()) {
+		else if(url.matches(IGNORE_SUFFIX_PATTERN)) {
 			logger.debug("Leaving shouldVisit(): false");
 			return false;
 		}
