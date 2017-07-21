@@ -169,7 +169,10 @@ public class WebCrawler {
 	}
 	
 	private List<String> getLinks(Document doc) {
-		return doc.select("a[href]").stream().map(d -> d.attr("abs:href")).collect(Collectors.toList());
+		return doc.select("a[href]")
+				.stream()
+				.map(d -> d.attr("abs:href"))
+				.collect(Collectors.toList());
 	}
 	
 	/**
