@@ -5,15 +5,15 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,7 +114,6 @@ public class WebCrawler {
 			if(visitedUrls.add(urlToCrawl)) {
 				try {
 					Document doc = getDocument(urlToCrawl);
-					ArrayList<Element> links = doc.select("a[href]");
 					
 					totalLinksVisited++;
 					
@@ -124,9 +123,10 @@ public class WebCrawler {
 						break;
 					}
 					
+					List<String> links = getLinks(doc);
+					
 					links
 						.stream()
-						.map((a) -> a.attr("abs:href"))
 						.filter(this::shouldVisit)
 						.filter((s) -> !visitedUrls.contains(s))
 						.filter((s) -> !linksToCrawl.contains(s))
@@ -166,6 +166,10 @@ public class WebCrawler {
 		sleep();
 		
 		return Jsoup.connect(urlToCrawl).timeout(TIMEOUT).get();
+	}
+	
+	private List<String> getLinks(Document doc) {
+		return doc.select("a[href]").stream().map(d -> d.attr("abs:href")).collect(Collectors.toList());
 	}
 	
 	/**
