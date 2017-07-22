@@ -30,13 +30,14 @@ public class UrlQueue {
 			throw new NullPointerException("Url cannot be null");
 		}
 		
-		if(!visitedUrls.contains(url)) {
+		if(!visitedUrls.contains(url) && !urlsToCrawl.contains(url)) {
 			urlsToCrawl.add(url);
 			
 			logger.debug("Url added to queue: {}", url);
 		}
-		
-		logger.debug("Url already in queue: {}", url);
+		else {
+			logger.debug("Url already in queue: {}", url);
+		}
 	}
 	
 	/**
