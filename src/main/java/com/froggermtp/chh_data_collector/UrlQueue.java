@@ -4,13 +4,8 @@ import java.util.ArrayDeque;
 import java.util.HashSet;
 
 public class UrlQueue {
-	private ArrayDeque<String> urlsToCrawl;
-	private HashSet<String> visitedUrls;
-	
-	public UrlQueue() {
-		this.urlsToCrawl = new ArrayDeque<>();
-		this.visitedUrls = new HashSet<>();
-	}
+	private ArrayDeque<String> urlsToCrawl = new ArrayDeque<>();
+	private HashSet<String> visitedUrls = new HashSet<>();
 	
 	public void addUrl(String url) {
 		if(!visitedUrls.contains(url)) {
