@@ -51,7 +51,14 @@ public final class MusicData extends ScrapedData {
 	 */
 	@Override
 	public String toString() {
-		return "MusicData [url=" + getUrl() + ", contentName=" + project + ", artist=" + artist + 
-				", date=" + date + "]";
+		StringBuilder sbuf = new StringBuilder();
+		sbuf.append("MusicData ")
+		.append("[url=").append(getUrl())
+		.append(", project=").append(project)
+		.append(", artist=").append(artist)
+		.append(", date=").append(date)
+		.append("]");
+		
+		return sbuf.toString();
 	}
 }
