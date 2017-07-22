@@ -85,28 +85,26 @@ public class WebCrawler {
 		
 		while(!urlQueue.isEmpty()) {
 			String urlToCrawl = urlQueue.getUrl();
+			Document doc = getDocument(urlToCrawl);
 
-			try {
-				Document doc = getDocument(urlToCrawl);
-
-				totalLinksVisited++;
-
-				onVisit(doc);
-
-				if(!shouldCrawl) {
-					break;
-				}
-
-				List<String> links = getLinks(doc);
-
-				links
-				.stream()
-				.filter(this::shouldVisit)
-				.forEach(urlQueue::addUrl);
+			if(doc == null) {
+				continue;
 			}
-			catch(IOException e) {
-				logger.error("JSoup failed to connect to the url {}", urlToCrawl, e);
+
+			totalLinksVisited++;
+
+			onVisit(doc);
+
+			if(!shouldCrawl) {
+				break;
 			}
+
+			List<String> links = getLinks(doc);
+
+			links
+			.stream()
+			.filter(this::shouldVisit)
+			.forEach(urlQueue::addUrl);
 		}
 
 		logger.info("The web crawler has finished");
@@ -128,12 +126,21 @@ public class WebCrawler {
 		}
 	}
 	
-	private Document getDocument(String urlToCrawl) throws IOException {
+	private Document getDocument(String urlToCrawl) {
 		final int TIMEOUT = 3000;
 		
 		sleep();
 		
-		return Jsoup.connect(urlToCrawl).timeout(TIMEOUT).get();
+		try {
+			Document doc = Jsoup.connect(urlToCrawl).timeout(TIMEOUT).get();
+			
+			return doc;
+		}
+		catch(IOException e) {
+			logger.error("JSoup failed to connect to the url {}", urlToCrawl, e);
+			
+			return null;
+		}
 	}
 	
 	private List<String> getLinks(Document doc) {
