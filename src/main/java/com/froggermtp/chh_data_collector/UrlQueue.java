@@ -20,6 +20,7 @@ public class UrlQueue {
 	
 	public String getUrl()  {
 		if(!urlsToCrawl.isEmpty()) {
+			String url = urlsToCrawl.poll();
 			visitedUrls.add(url);
 			
 			return url;
