@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayDeque;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,18 +49,7 @@ public class WebCrawler {
 	 */
 	private String[] seedUrls;
 	
-	/**
-	 * Contains all the URLs the crawler will visit (unless the crawler is stop prematurely).
-	 * This queue is first populated with the {@code WebCrawler#seedUrls}. 
-	 * Additional URLs are added by scraping links from each successive URL that is visited.
-	 */
-	private ArrayDeque<String> linksToCrawl;
-	
-	/**
-	 * Contains all the URLs that have already been visited by the web crawler. 
-	 * Any URL in this list will not be visited again. 
-	 */
-	private HashSet<String> visitedUrls;
+	private UrlQueue urlQueue;
 	
 	/**
 	 * Keeps track of the total amount of links that are visited by the web crawler.
@@ -72,15 +59,14 @@ public class WebCrawler {
 	public WebCrawler(String[] seedUrls) {
 		this.shouldCrawl = true;
 		this.seedUrls = seedUrls;
-		this.linksToCrawl = new ArrayDeque<>();
-		this.visitedUrls = new HashSet<>();
+		this.urlQueue = new UrlQueue();
 		
 		this.totalLinksVisited = 0;
 		
 		logger.info("Seed urls are {}", Arrays.toString(seedUrls));
 		
 		for(String url : seedUrls) {
-			linksToCrawl.add(url);
+			urlQueue.addUrl(url);
 		}
 	}
 	
@@ -97,36 +83,29 @@ public class WebCrawler {
 	public void crawl() {
 		logger.info("Starting the web crawler...");
 		
-		while(!linksToCrawl.isEmpty()) {
-			String urlToCrawl = linksToCrawl.poll();
-			
-			if(visitedUrls.add(urlToCrawl)) {
-				try {
-					Document doc = getDocument(urlToCrawl);
-					
-					totalLinksVisited++;
-					
-					onVisit(doc);
-					
-					if(!shouldCrawl) {
-						break;
-					}
-					
-					List<String> links = getLinks(doc);
-					
-					links
-						.stream()
-						.filter(this::shouldVisit)
-						.filter(s -> !visitedUrls.contains(s))
-						.filter(s -> !linksToCrawl.contains(s))
-						.forEach(s -> {
-							linksToCrawl.add(s);
-							logger.debug("Added {} to the queue", s);
-						});
+		while(!urlQueue.isEmpty()) {
+			String urlToCrawl = urlQueue.getUrl();
+
+			try {
+				Document doc = getDocument(urlToCrawl);
+
+				totalLinksVisited++;
+
+				onVisit(doc);
+
+				if(!shouldCrawl) {
+					break;
 				}
-				catch(IOException e) {
-					logger.error("JSoup failed to connect to the url {}", urlToCrawl, e);
-				}
+
+				List<String> links = getLinks(doc);
+
+				links
+				.stream()
+				.filter(this::shouldVisit)
+				.forEach(urlQueue::addUrl);
+			}
+			catch(IOException e) {
+				logger.error("JSoup failed to connect to the url {}", urlToCrawl, e);
 			}
 		}
 
