@@ -166,27 +166,12 @@ public class WebCrawler {
 	private boolean shouldVisit(String url) {
 		logger.debug("Entering shouldVisit(url={})", url);
 		
-		final String IGNORE_SUFFIX_PATTERN = ".*(\\.(css|js|gif|jpg|png|mp3|mp3|zip|gz))$";
-		
-		boolean followUrl = false;
-		
-		if(!FOLLOW_EXTERNAL_LINKS) {
-			for(String seed : seedUrls) {
-				if(url.startsWith(seed)) {
-					followUrl = true;
-				}
-			}
-		}
-		else {
-			followUrl = true;
-		}
-				
 		// These conditions are checked in this order for efficiency
-		if(!followUrl) {	
+		if(!shouldFollowLink(url)) {	
 			logger.debug("Leaving shouldVisit(): false");
 			return false;
 		}
-		else if(url.matches(IGNORE_SUFFIX_PATTERN)) {
+		else if(!hasValidExtension(url)) {
 			logger.debug("Leaving shouldVisit(): false");
 			return false;
 		}
@@ -196,6 +181,30 @@ public class WebCrawler {
 		}
 		
 		logger.debug("Leaving shouldVisit(): true");
+		return true;
+	}
+	
+	private boolean hasValidExtension(String url) {
+		final String IGNORE_SUFFIX_PATTERN = ".*(\\.(css|js|gif|jpg|png|mp3|mp3|zip|gz))$";
+		
+		return url.matches(IGNORE_SUFFIX_PATTERN) ? false : true;
+	}
+	
+	private boolean shouldFollowLink(String url) {
+		if(!FOLLOW_EXTERNAL_LINKS && isExternalLink(url)) {
+			return false;
+		}
+			
+		return true;
+	}
+	
+	private boolean isExternalLink(String url) {
+		for(String seed : seedUrls) {
+			if(url.startsWith(seed)) {
+				return false;
+			}
+		}
+		
 		return true;
 	}
 	
