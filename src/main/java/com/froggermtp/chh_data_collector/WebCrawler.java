@@ -166,22 +166,15 @@ public class WebCrawler {
 	private boolean shouldVisit(String url) {
 		logger.debug("Entering shouldVisit(url={})", url);
 		
-		// These conditions are checked in this order for efficiency
-		if(!shouldFollowLink(url)) {	
-			logger.debug("Leaving shouldVisit(): false");
-			return false;
-		}
-		else if(!hasValidExtension(url)) {
-			logger.debug("Leaving shouldVisit(): false");
-			return false;
-		}
-		else if(!isValidUrl(url)) {		
-			logger.debug("Leaving shouldVisit(): false");
-			return false;
+		if(shouldFollowLink(url) && hasValidExtension(url) && isValidUrl(url)) {
+			logger.debug("Leaving shouldVisit(): true");
+			
+			return true;
 		}
 		
-		logger.debug("Leaving shouldVisit(): true");
-		return true;
+		logger.debug("Leaving shouldVisit(): false");
+		
+		return false;
 	}
 	
 	private boolean hasValidExtension(String url) {
