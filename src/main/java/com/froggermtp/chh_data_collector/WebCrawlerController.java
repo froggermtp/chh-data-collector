@@ -28,11 +28,11 @@ import org.slf4j.LoggerFactory;
 public class WebCrawlerController {
 	private static final Logger logger = LoggerFactory.getLogger(WebCrawlerController.class);
 	
-	private UrlQueue urlQueue = new UrlQueue();
+	private final UrlQueue urlQueue = new UrlQueue();
 	
-	private WebCrawler crawler;
+	private final WebCrawler crawler;
 	
-	private CrawlerConfig config;
+	private final CrawlerConfig config;
 	
 	/**
 	 * Keeps track of the total amount of links that are visited by the web crawler.
@@ -63,10 +63,7 @@ public class WebCrawlerController {
 		while(!urlQueue.isEmpty()) {
 			String urlToCrawl = urlQueue.getUrl();
 			Document doc = getDocument(urlToCrawl);
-
-			if(doc == null) {
-				continue;
-			}
+			if(doc == null) continue;
 
 			totalLinksVisited++;
 			
@@ -78,9 +75,7 @@ public class WebCrawlerController {
 			}
 			
 
-			if(!crawler.isRunning()) {
-				break;
-			}
+			if(!crawler.isRunning()) break;
 
 			List<String> links = getLinks(doc);
 
