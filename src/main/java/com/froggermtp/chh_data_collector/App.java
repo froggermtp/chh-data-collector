@@ -11,8 +11,13 @@ public class App {
 	
 	public static void main( String[] args ) {	
 		String[] seedUrls = {"http://www.rapzilla.com/rz/music/freemp3s/"};
+		
+		CrawlerConfig config = new CrawlerConfig();
+		config.addSeedUrls(seedUrls);
+		config.setFollowExternalLinks(false);
+		config.setScrapeSeedUrls(false);
     	
-        WebCrawlerController webcrawler = new WebCrawlerController(seedUrls, new RapzillaWebCrawler());
+        WebCrawlerController webcrawler = new WebCrawlerController(config, new RapzillaWebCrawler());
         webcrawler.crawl();
         
         logger.info("Total links visited : {}", webcrawler.getTotalLinksVisited());

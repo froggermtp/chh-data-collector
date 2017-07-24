@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,35 +28,22 @@ import org.slf4j.LoggerFactory;
 public class WebCrawlerController {
 	private static final Logger logger = LoggerFactory.getLogger(WebCrawlerController.class);
 	
-	/**
-	 * If false the crawler will only visit a link if the URL begins exactly with one of the seed 
-	 * URLs. 
-	 * Otherwise the crawler will visit any URL.
-	 */
-	private final boolean FOLLOW_EXTERNAL_LINKS = false;;
-	
-	/**
-	 * A list containing the seed URLs for the web crawler. 
-	 * The web crawler will start crawling by visiting these URLs.
-	 */
-	private String[] seedUrls;
-	
 	private UrlQueue urlQueue = new UrlQueue();
 	
 	private WebCrawler crawler;
+	
+	private CrawlerConfig config;
 	
 	/**
 	 * Keeps track of the total amount of links that are visited by the web crawler.
 	 */
 	private long totalLinksVisited = 0;
 	
-	public WebCrawlerController(String[] seedUrls, WebCrawler crawler) {
-		this.seedUrls = seedUrls;
+	public WebCrawlerController(CrawlerConfig config, WebCrawler crawler) {
+		this.config = config;
 		this.crawler = crawler;
 		
-		for(String url : seedUrls) {
-			urlQueue.addUrl(url);
-		}
+		config.getSeedUrls().forEach(urlQueue::addUrl);
 	}
 	
 	/**
@@ -72,7 +58,7 @@ public class WebCrawlerController {
 	 */
 	public void crawl() {
 		logger.info("Starting the web crawler...");
-		logger.info("Seed urls: {}", Arrays.toString(seedUrls));
+		logger.info("Seed urls: {}", config.getSeedUrls().toString());
 		
 		while(!urlQueue.isEmpty()) {
 			String urlToCrawl = urlQueue.getUrl();
@@ -83,8 +69,14 @@ public class WebCrawlerController {
 			}
 
 			totalLinksVisited++;
-
-			crawler.onVisit(doc);
+			
+			if(!config.shouldScrapeSeedUrls() && config.getSeedUrls().contains(urlToCrawl)) {
+				logger.info("Not scraping seed url : {}", urlToCrawl);
+			}
+			else {
+				crawler.onVisit(doc);
+			}
+			
 
 			if(!crawler.isRunning()) {
 				break;
@@ -176,7 +168,7 @@ public class WebCrawlerController {
 	}
 	
 	private boolean shouldFollowLink(String url) {
-		if(!FOLLOW_EXTERNAL_LINKS && isExternalLink(url)) {
+		if(!config.shouldFollowExternalLinks() && isExternalLink(url)) {
 			return false;
 		}
 			
@@ -184,13 +176,9 @@ public class WebCrawlerController {
 	}
 	
 	private boolean isExternalLink(String url) {
-		for(String seed : seedUrls) {
-			if(url.startsWith(seed)) {
-				return false;
-			}
-		}
-		
-		return true;
+		return !config.getSeedUrls()
+				.stream()
+				.anyMatch(url::startsWith);
 	}
 	
 	/**
