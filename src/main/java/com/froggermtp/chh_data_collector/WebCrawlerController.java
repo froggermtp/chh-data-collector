@@ -86,7 +86,7 @@ public class WebCrawlerController {
 
 			crawler.onVisit(doc);
 
-			if(!crawler.isRunning) {
+			if(!crawler.isRunning()) {
 				break;
 			}
 
