@@ -78,7 +78,7 @@ public class RapzillaWebCrawler extends WebCrawler {
 		
 		if (titleString.contains("-")) {
 			String artistString = 
-					titleString.replaceAll("(<title>Free Download:\\s+)|(\\s*-.*)", "");
+					titleString.replaceAll("(<title>Free.*:\\s+)|(\\s*-.*)", "");
 			
 			logger.debug("Leaving scrapeArtist(): {}", artistString);
 			return artistString;
