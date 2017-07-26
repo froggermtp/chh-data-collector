@@ -13,7 +13,11 @@ public class App {
 		String[] seedUrls = {"http://www.rapzilla.com/rz/music/freemp3s/"};
 		
 		CrawlerConfig config = new CrawlerConfig();
-		config.addSeedUrls(seedUrls);
+		
+		for (String url : seedUrls) {
+			config.addSeedUrl(url);
+		}
+		
 		config.setFollowExternalLinks(false);
 		config.setScrapeSeedUrls(false);
     	
