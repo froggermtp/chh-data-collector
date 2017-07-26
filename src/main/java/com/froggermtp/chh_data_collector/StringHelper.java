@@ -22,4 +22,17 @@ public interface StringHelper {
 		
 		return input.replace(UNICODE_8211, UNICODE_45);
 	}
+	
+	/**
+	 * Converts all appearances of '&amp;' with '&' in the input String.
+	 * 
+	 * @param input  the string in which to replace characters, not null
+	 * @return a string with swapped out characters, not null
+	 */
+	static String replaceAmperstamp(String input) {
+		final String TO_BE_REPLACED = "&amp;";
+		final String AMPERSTAMP = "&";
+		
+		return input.replace(TO_BE_REPLACED, AMPERSTAMP);
+	}
 }

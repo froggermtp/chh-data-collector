@@ -74,6 +74,7 @@ public class RapzillaWebCrawler extends WebCrawler {
 		 * All the dashes are converted to one type to simplify the logic.
 		 */
 		titleString = StringHelper.replaceDashes(titleString);
+		titleString = StringHelper.replaceAmperstamp(titleString);
 		
 		if (titleString.contains("-")) {
 			String artistString = 
@@ -113,6 +114,7 @@ public class RapzillaWebCrawler extends WebCrawler {
 		 * All the dashes are converted to one type to simplify the logic.
 		 */
 		titleString = StringHelper.replaceDashes(titleString);
+		titleString = StringHelper.replaceAmperstamp(titleString);
 		
 		if (titleString.contains("-")) {
 			String projectNameString = titleString.replaceAll("(.*-\\s*)|(\\s*</title>)", "");
