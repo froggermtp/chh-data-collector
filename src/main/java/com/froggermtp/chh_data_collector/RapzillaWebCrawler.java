@@ -61,7 +61,7 @@ public class RapzillaWebCrawler extends WebCrawler {
 		
 		Elements titleElements = doc.select("title");
 		
-		if(titleElements.size() != 1) {
+		if (titleElements.size() != 1) {
 			logger.debug("Multiple title elements were scraped: {}" + titleElements.toString());
 			
 			logger.debug("Leaving scrapeArtist(): null");
@@ -75,7 +75,7 @@ public class RapzillaWebCrawler extends WebCrawler {
 		 */
 		titleString = StringHelper.replaceDashes(titleString);
 		
-		if(titleString.contains("-")) {
+		if (titleString.contains("-")) {
 			String artistString = 
 					titleString.replaceAll("(<title>Free Download:\\s+)|(\\s*-.*)", "");
 			
@@ -100,7 +100,7 @@ public class RapzillaWebCrawler extends WebCrawler {
 		
 		Elements titleElements = doc.select("title");
 		
-		if(titleElements.size() != 1) {
+		if (titleElements.size() != 1) {
 			logger.debug("Multiple title elements were scraped: {}", titleElements.toString());
 			
 			logger.debug("Leaving scrapeProject(): null");
@@ -114,7 +114,7 @@ public class RapzillaWebCrawler extends WebCrawler {
 		 */
 		titleString = StringHelper.replaceDashes(titleString);
 		
-		if(titleString.contains("-")) {
+		if (titleString.contains("-")) {
 			String projectNameString = titleString.replaceAll("(.*-\\s*)|(\\s*</title>)", "");
 			
 			logger.debug("Leaving scrapeProject(): {}", projectNameString);
@@ -138,7 +138,7 @@ public class RapzillaWebCrawler extends WebCrawler {
 		
 		Elements timeElements = doc.select("time");
 		
-		if(timeElements.size() != 1) {
+		if (timeElements.size() != 1) {
 			logger.debug("Multiple time elements were scraped: {}", timeElements.toString());
 			
 			logger.debug("Leaving scrapeDate(): null");
